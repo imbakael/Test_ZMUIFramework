@@ -13,7 +13,7 @@ public class WindowConfig : ScriptableObject {
         int count = 0;
         foreach (string item in windowRootArr) {
             string[] filePathArr = Directory.GetFiles(Application.dataPath + "/ZMUIFrameWork/Resources/" + item, "*.prefab", SearchOption.AllDirectories);
-            foreach (var path in filePathArr) {
+            foreach (string path in filePathArr) {
                 if (path.EndsWith(".meta")) {
                     continue;
                 }
@@ -31,7 +31,7 @@ public class WindowConfig : ScriptableObject {
             string floder = Application.dataPath + "/ZMUIFrameWork/Resources/" + item;
             //获取文件夹下的所有Prefab文件
             string[] filePathArr = Directory.GetFiles(floder, "*.prefab", SearchOption.AllDirectories);
-            foreach (var path in filePathArr) {
+            foreach (string path in filePathArr) {
                 if (path.EndsWith(".meta")) {
                     continue;
                 }
@@ -39,14 +39,14 @@ public class WindowConfig : ScriptableObject {
                 string fileName = Path.GetFileNameWithoutExtension(path);
                 //计算文件读取路径 
                 string filePath = item + "/" + fileName;
-                WindowData data = new WindowData { name = fileName, path = filePath };
+                var data = new WindowData { name = fileName, path = filePath };
                 windowDataList.Add(data);
             }
         }
     }
 
     public string GetWindowPath(string wndName) {
-        foreach (var item in windowDataList) {
+        foreach (WindowData item in windowDataList) {
             if (string.Equals(item.name, wndName)) {
                 return item.path;
             }

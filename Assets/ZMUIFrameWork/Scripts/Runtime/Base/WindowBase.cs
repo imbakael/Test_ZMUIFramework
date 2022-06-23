@@ -64,14 +64,10 @@ public class WindowBase : WindowBehaviour {
         }
     }
 
-    private void HideAnimation() {
-        UIModule.Instance.HideWindow(Name);
-    }
-
     #endregion
 
     public void HideWindow() {
-        HideAnimation();
+        UIModule.Instance.HideWindow(Name);
     }
 
     public override void SetVisible(bool isVisble) {
@@ -81,9 +77,7 @@ public class WindowBase : WindowBehaviour {
     }
 
     public void SetMaskVisible(bool isVisble) {
-        if (!UISetting.Instance.SINGMASK_SYSTEM) {
-            return;
-        }
+        Debug.Log(Name + ".setMask(" + isVisble + ")");
         mUIMask.alpha = isVisble ? 1 : 0;
     }
 

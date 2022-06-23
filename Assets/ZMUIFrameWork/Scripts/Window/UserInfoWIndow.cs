@@ -27,11 +27,8 @@ public class UserInfoWIndow : WindowBase
     public override void OnShow()
     {
         base.OnShow();
-        dataCompt.FriendButton.SetVisible(false);
-        dataCompt.CloseButton.gameObject.SetActive(false);
-
         dataCompt.FriendButton.SetVisible(true);
-        dataCompt.CloseButton.gameObject.SetActive(true);
+        dataCompt.CloseButton.SetVisible(true);
     }
     //物体隐藏时执行
     public override void OnHide()

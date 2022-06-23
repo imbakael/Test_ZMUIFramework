@@ -8,15 +8,16 @@ public class ZMUIMain : MonoBehaviour {
         UIModule.Instance.Initialize();
     }
 
-    void Start() {
+    private void Start() {
         UIModule.Instance.PopUpWindow<LoginWIndow>();
         UIModule.Instance.PreLoadWindow<HallWindow>();
         UIModule.Instance.PreLoadWindow<UserInfoWIndow>();
         UIModule.Instance.PreLoadWindow<SettingWIndow>();
         UIModule.Instance.PreLoadWindow<ChatWIndow>();
-
+        UIModule.Instance.PreLoadWindow<FriendWIndow>();
     }
-    public void Update() {
+
+    private void Update() {
         //if (Input.GetKeyDown(KeyCode.Q))
         //{
         //    UIModule.Instance.PopUpWindow<PassWIndow>();
