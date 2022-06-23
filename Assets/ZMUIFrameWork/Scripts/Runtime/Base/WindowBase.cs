@@ -72,7 +72,6 @@ public class WindowBase : WindowBehaviour {
 
     public void HideWindow() {
         HideAnimation();
-        //UIModule.Instance.HideWindow(Name);
     }
 
     public override void SetVisible(bool isVisble) {
@@ -108,7 +107,6 @@ public class WindowBase : WindowBehaviour {
             toggle.onValueChanged.AddListener((isOn) => {
                 action?.Invoke(isOn, toggle);
             });
-
         }
     }
 

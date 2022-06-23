@@ -185,20 +185,21 @@ public class UIModule {
     }
 
     private void DestoryWindow(WindowBase window) {
-        if (window != null) {
-            if (mAllWindowDic.ContainsKey(window.Name)) {
-                mAllWindowDic.Remove(window.Name);
-                mAllWindowList.Remove(window);
-                mVisibleWindowList.Remove(window);
-            }
-            window.SetVisible(false);
-            SetWidnowMaskVisible();
-            window.OnHide();
-            window.OnDestroy();
-            UnityEngine.Object.Destroy(window.gameObject);
-            //在出栈的情况下，上一个界面销毁时，自动打开栈种的下一个界面
-            PopNextStackWindow(window);
+        if (window == null) {
+            return;
         }
+        if (mAllWindowDic.ContainsKey(window.Name)) {
+            mAllWindowDic.Remove(window.Name);
+            mAllWindowList.Remove(window);
+            mVisibleWindowList.Remove(window);
+        }
+        window.SetVisible(false);
+        SetWidnowMaskVisible();
+        window.OnHide();
+        window.OnDestroy();
+        UnityEngine.Object.Destroy(window.gameObject);
+        //在出栈的情况下，上一个界面销毁时，自动打开栈种的下一个界面
+        PopNextStackWindow(window);
     }
 
     public void DestroyAllWindow(List<string> filterlist = null) {
@@ -261,6 +262,16 @@ public class UIModule {
     #region 堆栈系统
 
     /// <summary>
+    /// 压入并且弹出堆栈弹窗
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="popCallBack"></param>
+    public void PushAndPopStackWindow<T>(Action<WindowBase> popCallBack = null) where T : WindowBase, new() {
+        PushWindowToStack<T>(popCallBack);
+        StartPopFirstStackWindow();
+    }
+
+    /// <summary>
     /// 进栈一个界面
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -279,16 +290,6 @@ public class UIModule {
             return;
         mStartPopStackWndStatus = true;//已经开始进行堆栈弹出的流程，
         PopStackWindow();
-    }
-
-    /// <summary>
-    /// 压入并且弹出堆栈弹窗
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="popCallBack"></param>
-    public void PushAndPopStackWindow<T>(Action<WindowBase> popCallBack = null) where T : WindowBase, new() {
-        PushWindowToStack<T>(popCallBack);
-        StartPopFirstStackWindow();
     }
 
     /// <summary>
