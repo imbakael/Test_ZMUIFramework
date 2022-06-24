@@ -31,9 +31,9 @@ public class HallWindow : WindowBase
         //UIModule.Instance.PushWindowToStack<UserInfoWIndow>();
 
         //UIModule.Instance.StartPopFirstStackWindow();
-        UIModule.Instance.PushAndPopStackWindow<UserInfoWIndow>();
-        UIModule.Instance.PushAndPopStackWindow<SettingWIndow>();
-        UIModule.Instance.PushAndPopStackWindow<ChatWIndow>();
+        //UIModule.Instance.PushAndPopStackWindow<UserInfoWIndow>();
+        //UIModule.Instance.PushAndPopStackWindow<SettingWIndow>();
+        //UIModule.Instance.PushAndPopStackWindow<ChatWIndow>();
       
     }
     //物体隐藏时执行

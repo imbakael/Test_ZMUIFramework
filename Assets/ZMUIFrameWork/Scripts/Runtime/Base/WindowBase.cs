@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class WindowBase : WindowBehaviour {
+
     private List<Button> mAllButtonList = new List<Button>();//所有Button列表
     private List<Toggle> mToggleList = new List<Toggle>();//所有的Toggle列表
     private List<InputField> mInputList = new List<InputField>();//所有的输入框列表

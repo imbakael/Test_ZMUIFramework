@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UIModule {
@@ -39,26 +40,25 @@ public class UIModule {
     /// <typeparam name="T"></typeparam>
     public void PreLoadWindow<T>() where T : WindowBase, new() {
         string wndName = typeof(T).Name;
+        GameObject go = InstantiateWindow(wndName);
         T windowBase = new T();
-        GameObject nWnd = TempLoadWindow(wndName);
-        if (nWnd != null) {
-            windowBase.gameObject = nWnd;
-            windowBase.transform = nWnd.transform;
-            windowBase.Canvas = nWnd.GetComponent<Canvas>();
-            windowBase.Canvas.worldCamera = mUICamera;
-            windowBase.Name = nWnd.name;
+        if (go != null) {
+            windowBase.Init(go, go.transform, go.GetComponent<Canvas>(), mUICamera, go.name);
             windowBase.OnAwake();
             windowBase.SetVisible(false);
-            RectTransform rectTrans = nWnd.GetComponent<RectTransform>();
-            rectTrans.anchorMax = Vector2.one;
-            rectTrans.offsetMax = Vector2.zero;
-            rectTrans.offsetMin = Vector2.zero;
+            ResetRectTransform(go.GetComponent<RectTransform>());
             mAllWindowDic.Add(wndName, windowBase);
         }
         Debug.Log("预加载窗口 窗口名字：" + wndName);
     }
 
-    private GameObject TempLoadWindow(string wndName) {
+    private void ResetRectTransform(RectTransform target) {
+        target.anchorMax = Vector2.one;
+        target.offsetMax = Vector2.zero;
+        target.offsetMin = Vector2.zero;
+    }
+
+    private GameObject InstantiateWindow(string wndName) {
         GameObject window = UnityEngine.Object.Instantiate(Resources.Load<GameObject>(mWindowConfig.GetWindowPath(wndName)), mUIRoot);
         window.transform.localScale = Vector3.one;
         window.transform.localPosition = Vector3.zero;
@@ -75,7 +75,7 @@ public class UIModule {
             return wnd as T;
         }
         T t = new T();
-        return InitializeWindow(t, wndName) as T;
+        return InitWindow(t, wndName) as T;
     }
 
     private WindowBase PopUpWindow(WindowBase window) {
@@ -85,7 +85,7 @@ public class UIModule {
             ShowWindow(wnd);
             return wnd;
         }
-        return InitializeWindow(window, wndName);
+        return InitWindow(window, wndName);
     }
 
     private WindowBase GetWindow(string winName) {
@@ -107,24 +107,15 @@ public class UIModule {
         }
     }
 
-    private WindowBase InitializeWindow(WindowBase windowBase, string wndName) {
-        //1.生成对应的窗口预制体
-        GameObject nWnd = TempLoadWindow(wndName);
-        //2.初始出对应管理类
-        if (nWnd != null) {
-            windowBase.gameObject = nWnd;
-            windowBase.transform = nWnd.transform;
-            windowBase.Canvas = nWnd.GetComponent<Canvas>();
-            windowBase.Canvas.worldCamera = mUICamera;
+    private WindowBase InitWindow(WindowBase windowBase, string wndName) {
+        GameObject go = InstantiateWindow(wndName);
+        if (go != null) {
+            windowBase.Init(go, go.transform, go.GetComponent<Canvas>(), mUICamera, go.name);
             windowBase.transform.SetAsLastSibling();
-            windowBase.Name = nWnd.name;
             windowBase.OnAwake();
             windowBase.SetVisible(true);
             windowBase.OnShow();
-            RectTransform rectTrans = nWnd.GetComponent<RectTransform>();
-            rectTrans.anchorMax = Vector2.one;
-            rectTrans.offsetMax = Vector2.zero;
-            rectTrans.offsetMin = Vector2.zero;
+            ResetRectTransform(go.GetComponent<RectTransform>());
             mAllWindowDic.Add(wndName, windowBase);
             mVisibleWindowList.Add(windowBase);
             SetWidnowMaskVisible();
@@ -146,7 +137,6 @@ public class UIModule {
             SetWidnowMaskVisible();
             window.OnHide();
         }
-        //在出栈的情况下，上一个界面隐藏时，自动打开栈中的下一个界面
         PopNextStackWindow(window);
     }
 
@@ -164,13 +154,13 @@ public class UIModule {
 
     private void DestroyWindow(string wndName) {
         WindowBase window = GetWindow(wndName);
+        if (window == null) {
+            return;
+        }
         DestoryWindow(window);
     }
 
     private void DestoryWindow(WindowBase window) {
-        if (window == null) {
-            return;
-        }
         if (mAllWindowDic.ContainsKey(window.Name)) {
             mAllWindowDic.Remove(window.Name);
             mVisibleWindowList.Remove(window);
@@ -180,35 +170,19 @@ public class UIModule {
         window.OnHide();
         window.OnDestroy();
         UnityEngine.Object.Destroy(window.gameObject);
-        //在出栈的情况下，上一个界面销毁时，自动打开栈种的下一个界面
         PopNextStackWindow(window);
     }
 
     private void SetWidnowMaskVisible() {
-        WindowBase maxOrderWndBase = null;
-        int maxOrder = 0;
-        int maxIndex = 0;
-
-        //1.关闭所有窗口的Mask 设置为不可见
-        //2.从所有可见窗口中找到一个层级最大的窗口，把Mask设置为可见
-        foreach (WindowBase window in mVisibleWindowList) {
-            Debug.Assert(window != null && window.gameObject != null, "window = null!");
-            int currentOrder = window.Canvas.sortingOrder;
-            int currentIndex = window.transform.GetSiblingIndex();
-            if (maxOrderWndBase == null) {
-                maxOrderWndBase = window;
-                maxOrder = currentOrder;
-                maxIndex = currentIndex;
-            } else {
-                if (maxOrder < currentOrder) {
-                    maxOrder = currentOrder;
-                    maxOrderWndBase = window;
-                } else if (maxOrder == currentOrder && maxIndex < currentIndex) {
-                    maxOrderWndBase = window;
-                    maxIndex = currentIndex;
-                }
-            }
+        if (mVisibleWindowList.Count == 0) {
+            return;
         }
+        int maxOrder = mVisibleWindowList.Max(t => t.Canvas.sortingOrder);
+        WindowBase maxOrderWndBase =
+            mVisibleWindowList
+            .Where(t => t.Canvas.sortingOrder == maxOrder)
+            .OrderByDescending(t => t.transform.GetSiblingIndex())
+            .First();
         foreach (WindowBase item in mVisibleWindowList) {
             item.SetMaskVisible(item == maxOrderWndBase);
         }
@@ -228,13 +202,14 @@ public class UIModule {
     }
 
     public void StartPopFirstStackWindow() {
-        if (mStartPopStackWndStatus) 
+        if (mStartPopStackWndStatus) {
             return;
+        }
         mStartPopStackWndStatus = true;//已经开始进行堆栈弹出的流程，
         PopStackWindow();
     }
 
-    private bool PopStackWindow() {
+    private void PopStackWindow() {
         if (mWindowStack.Count > 0) {
             WindowBase window = mWindowStack.Dequeue();
             WindowBase popWindow = PopUpWindow(window);
@@ -242,10 +217,8 @@ public class UIModule {
             popWindow.PopStack = true;
             popWindow.PopStackListener?.Invoke(popWindow);
             popWindow.PopStackListener = null;
-            return true;
         } else {
             mStartPopStackWndStatus = false;
-            return false;
         }
     }
 

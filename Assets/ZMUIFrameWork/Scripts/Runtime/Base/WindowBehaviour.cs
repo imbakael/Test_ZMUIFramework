@@ -3,12 +3,14 @@ using System;
 
 public abstract class WindowBehaviour {
 
-    public GameObject gameObject { get; set; } //当前窗口物体
-    public Transform transform { get; set; } //代表自己
-    public Canvas Canvas { get; set; }
-    public string Name { get; set; }
-    public bool Visible { get; set; }
-    public bool PopStack { get; set; }//是否是通过堆栈系统弹出的弹窗
+    public GameObject gameObject { get; private set; } //当前窗口物体
+    public Transform transform { get; private set; } //代表自己
+    public Canvas Canvas { get; private set; }
+    public string Name { get; private set; }
+
+    public bool Visible { get; protected set; }
+
+    public bool PopStack { get; set; } //是否是通过堆栈系统弹出的弹窗
     public Action<WindowBase> PopStackListener { get; set; }
 
     public virtual void OnAwake() { } //只会在物体创建时执行一次 ，与Mono Awake调用时机和次数保持一致
@@ -22,4 +24,12 @@ public abstract class WindowBehaviour {
     public virtual void OnDestroy() { } //在当前界面被销毁时调用一次
 
     public virtual void SetVisible(bool isVisble) { }  //设置物体的可见性
+
+    public void Init(GameObject gameObject, Transform transform, Canvas canvas, Camera camera, string name) {
+        this.gameObject = gameObject;
+        this.transform = transform;
+        Canvas = canvas;
+        Canvas.worldCamera = camera;
+        Name = name;
+    }
 }
