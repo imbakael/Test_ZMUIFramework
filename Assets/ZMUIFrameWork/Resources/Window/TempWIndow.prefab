@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 1167827622638046673}
   - component: {fileID: 6092015461317816713}
   m_Layer: 5
-  m_Name: TempWIndow
+  m_Name: TempWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

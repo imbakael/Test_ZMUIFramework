@@ -9,12 +9,7 @@ public class ZMUIMain : MonoBehaviour {
     }
 
     private void Start() {
-        UIModule.Instance.PopUpWindow<LoginWIndow>();
-        UIModule.Instance.PreLoadWindow<HallWindow>();
-        UIModule.Instance.PreLoadWindow<UserInfoWIndow>();
-        UIModule.Instance.PreLoadWindow<SettingWIndow>();
-        UIModule.Instance.PreLoadWindow<ChatWIndow>();
-        UIModule.Instance.PreLoadWindow<FriendWIndow>();
+        var startWindow = UIModule.Instance.PopUpWindow<StartWindow>();
     }
 
     private void Update() {
@@ -23,14 +18,6 @@ public class ZMUIMain : MonoBehaviour {
         //    UIModule.Instance.PopUpWindow<PassWIndow>();
         //}
 
-        if (Input.GetKeyDown(KeyCode.W)) {
-            Debug.Log("PushAndPopStackWindow<UserInfoWIndow>");
-            UIModule.Instance.PushAndPopStackWindow<UserInfoWIndow>();
-        }
-        if (Input.GetKeyDown(KeyCode.E)) {
-            Debug.Log("PushAndPopStackWindow<SettingWIndow>");
-            UIModule.Instance.PushAndPopStackWindow<SettingWIndow>();
-        }
     }
 
 }

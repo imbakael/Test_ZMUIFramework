@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WindowConfig", menuName = "WindowConfig", order = 0)]
 public class WindowConfig : ScriptableObject {
 
-    private string[] windowRootArr = new string[] { "Game", "Hall", "Window" };
+    private string[] windowRootArr = new string[] { "Game", "LittlePrefabs", "Window" };
     public List<WindowData> windowDataList = new List<WindowData>();
 
     public void GeneratorWindowConfig() {

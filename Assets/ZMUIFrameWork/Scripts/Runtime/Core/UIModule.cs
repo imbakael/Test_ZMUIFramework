@@ -152,6 +152,10 @@ public class UIModule {
         Resources.UnloadUnusedAssets();
     }
 
+    public void DestroyWindow<T>() where T : WindowBase {
+        DestroyWindow(typeof(T).Name);
+    }
+
     private void DestroyWindow(string wndName) {
         WindowBase window = GetWindow(wndName);
         if (window == null) {
