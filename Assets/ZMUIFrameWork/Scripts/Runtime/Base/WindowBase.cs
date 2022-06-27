@@ -78,7 +78,6 @@ public class WindowBase : WindowBehaviour {
     }
 
     public void SetMaskVisible(bool isVisble) {
-        Debug.Log(Name + ".setMask(" + isVisble + ")");
         mUIMask.alpha = isVisble ? 1 : 0;
     }
 

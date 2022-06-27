@@ -9,7 +9,7 @@ public class ZMUIMain : MonoBehaviour {
     }
 
     private void Start() {
-        var startWindow = UIModule.Instance.PopUpWindow<StartWindow>();
+        
     }
 
     private void Update() {

@@ -5,10 +5,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WindowConfig", menuName = "WindowConfig", order = 0)]
 public class WindowConfig : ScriptableObject {
 
-    private string[] windowRootArr = new string[] { "Game", "LittlePrefabs", "Window" };
+    private string[] windowRootArr = new string[] { "LittlePrefabs", "Window" };
     public List<WindowData> windowDataList = new List<WindowData>();
 
     public void GeneratorWindowConfig() {
+        windowRootArr = new string[] { "LittlePrefabs", "Window" };
         //检测预制体有没有新增，如果没有就不需要生成配置
         int count = 0;
         foreach (string item in windowRootArr) {
